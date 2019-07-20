@@ -7,11 +7,12 @@ const testDB = {
         .connect("mongodb://127.0.0.1:27018/test-quick-live", {
           useNewUrlParser: true,
           useCreateIndex: true,
-          useFindAndModify: true
+          useFindAndModify: false
         })
         .then(() => resolve())
         .catch(e => reject(e));
     }),
+  drop: () => mongoose.connection.dropDatabase(),
   close: () => mongoose.disconnect()
 };
 const prodDB = {

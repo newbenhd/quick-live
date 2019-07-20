@@ -1,4 +1,4 @@
-const db = require("./utils/db");
+const db = require("./database/db");
 const app = require("./server");
 
 const port = process.env.PORT || 5000;

@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "mocha *.test.js",
+    "test:user": "mocha --recursive --exit ./server/router/user/__test__",
     "test:mapbox": "mocha ./utils/mapbox.test.js",
     "test:darksky": "mocha ./utils/darksky.test.js"
   },
@@ -12,7 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mongoose": "^5.6.5",
     "morgan": "^1.9.1",
