@@ -37,14 +37,14 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.statics.toJSON = function() {
+userSchema.methods.toJSON = function() {
   const obj = this.toObject();
   delete obj.tokens;
   delete obj.password;
   return obj;
 };
 
-userSchema.statics.generateAuthToken = async function() {
+userSchema.methods.generateAuthToken = async function() {
   try {
     const token = await jwt.sign({ _id: this._id.toString() }, "skdlzl7017", {
       expiresIn: "5h"

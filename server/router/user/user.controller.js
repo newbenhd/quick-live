@@ -6,6 +6,7 @@ const signup = async (req, res) => {
     const user = await model.create(req.body);
     const token = await user.generateAuthToken();
     res.status(201).send({
+      user,
       message: "Sign up success.",
       token
     });
@@ -31,6 +32,20 @@ const signIn = async (req, res) => {
     res.status(500).send({
       error,
       message: "Fail to sign in. Please try again."
+    });
+  }
+};
+const logout = async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter(token => token.token != req.token);
+    await req.user.save();
+    res.status(202).send({
+      message: "Successfully logged out."
+    });
+  } catch (error) {
+    res.status(500).send({
+      error,
+      message: "Fail to log out. Please try again."
     });
   }
 };
@@ -79,6 +94,7 @@ const getOne = async (req, res) => {
 module.exports = {
   signup,
   signIn,
+  logout,
   deleteOne,
   updateOne,
   getOne

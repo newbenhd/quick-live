@@ -6,6 +6,8 @@
   "scripts": {
     "test": "mocha *.test.js",
     "test:user": "mocha --recursive --exit ./server/router/user/__test__",
+    "test:user-model": "mocha --recursive --exit ./server/router/user/__test__/model.test.js",
+    "test:user-controller": "mocha --recursive --exit ./server/router/user/__test__/controller.test.js",
     "test:mapbox": "mocha ./utils/mapbox.test.js",
     "test:darksky": "mocha ./utils/darksky.test.js"
   },
