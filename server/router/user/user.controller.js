@@ -26,6 +26,7 @@ const signIn = async (req, res) => {
     const token = await user.generateAuthToken();
     res.status(200).send({
       message: "Sign in success.",
+      user,
       token
     });
   } catch (error) {
@@ -52,22 +53,22 @@ const logout = async (req, res) => {
 const deleteOne = async (req, res) => {
   try {
     await req.user.remove();
-    res.status(202).send({
+    return res.status(202).send({
       message: "Delete your account success."
     });
   } catch (error) {
-    res.status(500).send({
+    return res.status(500).send({
       error,
       message: "Fail to delete your account. Please try again."
     });
   }
 };
 const updateOne = async (req, res) => {
-  const schemeKeys = Object.keys(model.schema.path);
+  const schemeKeys = Object.keys(model.schema.paths);
   // const updateKeys = Object.keys(req.body)
   const updates = _.pick(req.body, schemeKeys);
   if (_.isEmpty(updates)) {
-    res.status(400).send({
+    return res.status(400).send({
       error: "At least one of update keys has to match to user keys.",
       message: "At least one of update keys has to match to user keys."
     });
@@ -77,11 +78,12 @@ const updateOne = async (req, res) => {
       req.user[key] = updates[key];
     }
     await req.user.save();
-    res.status(201).send({
-      message: "Update your account success."
+    return res.status(201).send({
+      message: "Update your account success.",
+      user: req.user
     });
   } catch (error) {
-    res.status(500).send({
+    return res.status(500).send({
       error,
       message: "Fail to update your account. Please try again."
     });

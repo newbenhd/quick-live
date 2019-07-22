@@ -11,25 +11,23 @@ module.exports = async (req, res, next) => {
     const decoded = await jwt.verify(token, "skdlzl7017");
     const user = await model.findById(decoded._id);
     if (!user) {
-      handleError({ name: "Unauthorized" }, res);
+      return handleError({ name: "Unauthorized" }, res);
     }
     const index = _.findIndex(user.tokens, thisToken => {
       return thisToken.token === token;
     });
     if (index < 0) {
-      console.log("couldn't find token");
-      handleError({ name: "Unauthorized" }, res);
+      return handleError({ name: "Unauthorized" }, res);
     }
     req.token = token;
     req.user = user;
     next();
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 };
 
 const handleError = (error, res) => {
-  console.log(error);
   if (error.name === "TokenExpiredError") {
     res.status(401).send({
       error,
@@ -41,7 +39,7 @@ const handleError = (error, res) => {
       message: "Json web token failed. Please see details on error."
     });
   } else {
-    res.status(401).end({
+    res.status(401).send({
       error,
       message: "Unauthorized"
     });

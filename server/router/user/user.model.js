@@ -59,18 +59,22 @@ userSchema.methods.generateAuthToken = async function() {
 
 userSchema.statics.findByCredentials = async function(email, password) {
   const model = mongoose.model("User", userSchema);
-  const user = await model.findOne({
-    email
-  });
-  if (!user) throw new Error("Login failed");
-  const isPassword = await bcrypt.compare(password, user.password);
-  if (!isPassword)
-    return {
-      error: new Error("Login failed"),
-      message: "Login failed"
-    };
+  try {
+    const user = await model.findOne({
+      email
+    });
+    if (!user) throw new Error("Login failed");
+    const isPassword = await bcrypt.compare(password, user.password);
+    if (!isPassword)
+      return {
+        error: new Error("Login failed"),
+        message: "Login failed"
+      };
 
-  return user;
+    return user;
+  } catch (error) {
+    return error;
+  }
 };
 
 userSchema.pre("save", async function(next) {

@@ -135,14 +135,170 @@ describe("Test user controllers", () => {
         .set("Authorization", headerAuth)
         .expect(401)
         .end((err, res) => {
-          console.log(res.body);
           expect(res.body).to.be.an("object");
+          expect(res.body.message).to.equal("Unauthorized");
           done();
         });
     });
   });
-  describe("POST /api/user/signIn", () => {});
-  describe("GET /api/user", () => {});
-  describe("PUT /api/user", () => {});
-  describe("DELETE /api/user", () => {});
+  describe("POST /api/user/signIn", () => {
+    // beforeEach(done => {
+    //   request(app)
+    //     .post("/api/user/logout")
+    //     .set("Authorization", headerAuth)
+    //     .expect(202, done);
+    // });
+    it("expect res w/ properties of a user, token, and message", done => {
+      request(app)
+        .post("/api/user/signIn")
+        .send({
+          email: "newben.hd@gmail.com",
+          password: "random123!"
+        })
+        .expect(200)
+        .end((err, res) => {
+          expect(res.body.user).to.be.an("object");
+          expect(res.body.message).to.equal("Sign in success.");
+          headerAuth = res.body.token;
+          done();
+        });
+    });
+    it("should log out before next sign in request", done => {
+      request(app)
+        .post("/api/user/logout")
+        .set("Authorization", headerAuth)
+        .expect(202, done);
+    });
+    it("expect 500 error when sign in with wrong password", done => {
+      request(app)
+        .post("/api/user/signIn")
+        .send({
+          email: "newben.hd@gmail.com",
+          password: "rnn123!0"
+        })
+        .expect(500, done);
+    });
+    it("expect 500 error when sign in with wrong email", done => {
+      request(app)
+        .post("/api/user/signIn")
+        .send({
+          email: "newben.hd@gmil.com",
+          password: "random123!"
+        })
+        .expect(500, done);
+    });
+    it("expect 500 error when sign in with invalid field", done => {
+      request(app)
+        .post("/api/user/signIn")
+        .send({
+          token: "newben.hd@gmail.com",
+          password: "random123!"
+        })
+        .expect(
+          res => res.body.message === "Fail to sign in. Please try again."
+        )
+        .expect(500, done);
+    });
+  });
+  describe("GET /api/user", () => {
+    it("should log in first before testing GET /api/user", done => {
+      request(app)
+        .post("/api/user/signIn")
+        .send({
+          email: "joelee@usc.edu",
+          password: "joelee123!"
+        })
+        .expect(200)
+        .end((err, res) => {
+          headerAuth = res.body.token;
+          done();
+        });
+    });
+    it("expect res with user object, but no password or tokens", done => {
+      request(app)
+        .get("/api/user")
+        .set("Authorization", headerAuth)
+        .expect(200)
+        .end((err, res) => {
+          expect(res.body.email).to.equal("joelee@usc.edu");
+          expect(res.body.password).to.be.undefined;
+          expect(res.body.tokens).to.be.undefined;
+          done();
+        });
+    });
+    it("expect err when wrong token used for a get request", done => {
+      request(app)
+        .get("/api/user")
+        .set("Authorization", "asjdkflj123123salj")
+        .expect(401, done);
+    });
+
+    it("expect [401] err when request w/o token", done => {
+      request(app)
+        .get("/api/user")
+        .expect(401, done);
+    });
+  });
+  describe("PUT /api/user", () => {
+    it("expect res with user and message info", done => {
+      request(app)
+        .put("/api/user")
+        .set("Authorization", headerAuth)
+        .send({
+          name: "Joe Lee"
+        })
+        .expect(201)
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res.body.message).to.equal("Update your account success.");
+          expect(res.body.user.name).to.equal("Joe Lee");
+          done();
+        });
+    });
+    it("expect [400] when update request w/ no valid field", done => {
+      request(app)
+        .put("/api/user")
+        .set("Authorization", headerAuth)
+        .send({
+          nonValid: "field value"
+        })
+        .expect(res =>
+          expect(res.body.message).to.equal(
+            "At least one of update keys has to match to user keys."
+          )
+        )
+        .expect(400, done);
+    });
+    it("expect [401] when no token is set", done => {
+      request(app)
+        .put("/api/user")
+        .send({
+          name: "Ben Morrison"
+        })
+        .expect(401, done);
+    });
+  });
+  describe("DELETE /api/user", () => {
+    it("expect res w/ success message", done => {
+      request(app)
+        .delete("/api/user")
+        .set("Authorization", headerAuth)
+        .expect(202)
+        .end((err, res) => {
+          expect(res.body.message).to.equal("Delete your account success.");
+          done();
+        });
+    });
+    it("making sure if it's not in database after delete the user", done => {
+      request(app)
+        .get("/api/user")
+        .set("Authorization", headerAuth)
+        .expect(401, done);
+    });
+    it("expect [401] when delete request w/o token", done => {
+      request(app)
+        .delete("/api/user")
+        .expect(401, done);
+    });
+  });
 });
