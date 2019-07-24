@@ -2,42 +2,48 @@ const User = require("./oauth.model");
 const express = require("express");
 const router = express.Router();
 const controller = require("./oauth.controller");
+const config = require("./config");
+const GitHubStrategy = require("passport-github").Strategy;
 
 const passport = require("passport");
-const KakaoStrategy = require("passport-kakao").Strategy;
 
 passport.use(
-  new KakaoStrategy(
+  new GitHubStrategy(
     {
-      clientID: "6277e4a1082f3d75f7b31b373a321b7e",
-      callbackURL: "http://localhost:5000/api/oauth/callback"
+      clientID: config.gitClientID,
+      clientSecret: config.gitClientSecret,
+      callbackURL: "/api/oauth/callback"
     },
-    (accessToken, refreshToken, profile, done) => {
-      console.log("passed!");
-      let user = User.findOne({
-        "kakao.id": profile.id
-      })
-        .then(user => {
-          console.log("profile");
-          if (!user) {
-            console.log(profile._json);
-            // user = await User.create({
-            //   name: profile.username,
-            //   email:
-            //   kakao: profile._json
-            // });
-            return done(null, { name: profile.username });
-          }
-        })
-        .catch(e => done(e, null));
+    async (accessToken, refreshToken, profile, cb) => {
+      try {
+        let user = await User.findOne({
+          id: profile._json.id
+        });
+        if (user) {
+          console.log("found the user from db");
+          return cb(null, user);
+        }
+        user = await User.create({
+          id: profile._json.id,
+          username: profile.username,
+          displayName: profile.displayName,
+          email: profile._json.email
+        });
+        return cb(null, user);
+      } catch (error) {
+        return cb(error, null);
+      }
     }
   )
 );
 
 passport.serializeUser((user, done) => {
+  console.log("serialize user");
   done(null, user.id);
 });
+
 passport.deserializeUser(async (id, done) => {
+  console.log("deserialize user");
   try {
     const user = await User.findById(id);
     done(null, user);
@@ -46,14 +52,15 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-router
-  .route("/signIn")
-  .get(passport.authenticate("kakao", { scope: ["profile"] }), (req, res) => {
-    console.log(req);
-  });
+router.route("/signIn").get(passport.authenticate("github"));
 router
   .route("/callback")
-  .get(passport.authenticate("kakao"), controller.callback);
-router.route("/logout").post(controller.logout);
+  .get(
+    passport.authenticate("github", { failureRedirect: "/" }),
+    (req, res) => {
+      console.log(req.user);
+      res.redirect("/");
+    }
+  );
 
 module.exports = router;

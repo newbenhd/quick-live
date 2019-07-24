@@ -1,13 +1,31 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const oauthSchema = new mongoose.Schema(
   {
-    name: {
+    username: {
       type: String,
       required: true
     },
-    kakao: {
-      type: Object
+    displayName: {
+      type: String
+    },
+    id: {
+      type: Number,
+      required: true
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: value => {
+          validator.isEmail(value);
+        },
+        message: props => {
+          return "must be email";
+        }
+      }
     }
   },
   {

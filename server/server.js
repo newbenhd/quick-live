@@ -20,6 +20,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(morgan("dev"));
 
+app.get("/", (req, res) => {
+  res.send("Hello, World!");
+});
+
 /* Mount routers */
 app.use("/api/user", userRouter);
 app.use("/api/oauth", oauthRouter);
