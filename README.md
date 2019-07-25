@@ -74,7 +74,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Benjamin Morrison** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Benjamin Morrison** - *Initial work* 
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 

@@ -1,0 +1,30 @@
+/* Color */
+$primary-color-light: #fefefe;
+$primary-color: #b7cae0;
+$primary-color-dark: #7ea0c8;
+
+$secondary-color-light: #ff8162;
+$secondary-color: #ff6347;
+$secondary-color-dark: #dc442d;
+
+$tertiary-color-light: #c3c3c3;
+$tertiary-color: #a3a3a3;
+$tertiary-color-dark: #848484;
+
+$accent-color-light: #d3d3d3;
+$accent-color: #a8a8a8;
+$accent-color-dark: #515151;
+
+/* Layout */
+*,*::before,*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+body {
+  font-family: 'Roboto Mono', monospace;
+}

@@ -1,0 +1,70 @@
+.page.login {
+  //noinspection SassScssResolvedByNameOnly
+  background-color: $tertiary-color-light;
+  display: grid;
+  justify-content: center;
+  height: 100vh;
+  padding-top: 10rem;
+
+  .form {
+    width: 42rem;
+    height: 50rem;
+    padding: 2rem;
+    box-shadow: 0 0 2rem rgba(0, 0, 0, 0.5);
+    border-radius: 1rem;
+    //noinspection SassScssResolvedByNameOnly
+    background-color: $secondary-color-light;
+    display: flex;
+    flex-direction: column;
+    color: $primary-color-light;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+    font-size: 1.3rem;
+    & > *:not(:last-child) {
+      margin-bottom: 2.2rem;
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+
+    & ~ .inline {
+      flex-direction: row;
+      align-items: baseline;
+
+      & > *:nth-child(1n) {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+  .link {
+    display: flex;
+    justify-content: flex-end;
+  }
+  p {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    grid-gap: 0.5rem;
+  }
+  input {
+    background: none;
+    border: none;
+    border-bottom: 0.1rem solid $primary-color-light;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    &:focus {
+      outline: none;
+    }
+  }
+  .accent-line {
+    border-bottom: 0.2rem solid $accent-color;
+  }
+  .accent-bg {
+    border: none;
+    background-color: $accent-color;
+    border-radius: 5rem;
+    padding: 0.8rem;
+    color: $primary-color-light
+  }
+}
