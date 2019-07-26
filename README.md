@@ -48,10 +48,11 @@ Give an example
 
 ### And coding style tests
 
-Explain what these tests test and why
+Airbnb code style, ECMAScript 2015.
+The style will be sync by **Prettier** and **ESLint**.
 
 ```
-Give an example
+eslint .
 ```
 
 ## Deployment
