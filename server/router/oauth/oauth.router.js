@@ -12,9 +12,11 @@ passport.use(
     {
       clientID: config.gitClientID,
       clientSecret: config.gitClientSecret,
-      callbackURL: "/api/oauth/callback"
+      callbackURL: "/api/oauth/callback",
+      proxy: true
     },
     async (accessToken, refreshToken, profile, cb) => {
+      console.log('oauth github');
       try {
         let user = await User.findOne({
           id: profile._json.id
@@ -58,9 +60,9 @@ router
   .get(
     passport.authenticate("github", { failureRedirect: "/" }),
     (req, res) => {
-      console.log(req.user);
       res.redirect("/");
     }
   );
+router.route('/signOut').post(controller.logout);
 
 module.exports = router;

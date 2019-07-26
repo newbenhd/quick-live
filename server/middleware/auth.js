@@ -3,6 +3,11 @@ const model = require("../router/user/user.model");
 const _ = require("lodash");
 
 module.exports = async (req, res, next) => {
+  // console.log(req.id);
+  // console.log(req.session);
+  if(req.user) {
+    return next();
+  }
   try {
     const token = req
       .header("Authorization")
