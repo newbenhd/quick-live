@@ -6,11 +6,16 @@ const cookieSession = require("cookie-session");
 // const bodyParser = require('body-parser');
 const userRouter = require("./router/user/user.router");
 const oauthRouter = require("./router/oauth/oauth.router");
+const registryRouter = require('./router/registry/registry.router');
 const path = require("path");
+const cors = require('cors');
 
 const app = express();
 
+
+
 /* General purpose middlewares */
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
@@ -36,5 +41,6 @@ if(process.env.NODE_ENV === 'production') {
 /* Mount routers */
 app.use("/api/user", userRouter);
 app.use("/api/oauth", oauthRouter);
+app.use('/api/registry', registryRouter);
 
 module.exports = app;

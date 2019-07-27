@@ -86,6 +86,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 * https://alligator.io/redux/redux-thunk/
+* Appreciate [Fakiolas Marios](https://github.com/fakiolinho) for nice React loading component!! Check out his [react-loading](https://github.com/fakiolinho/react-loading)
 * Hat tip to anyone whose code was used
 * Inspiration
 * etc

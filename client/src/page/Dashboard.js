@@ -1,31 +1,112 @@
 import React from "react";
+import {connect} from 'react-redux';
+import * as actions from '../actions/registry.action';
+import ReactLoading from 'react-loading';
+
+const mapStateToProps = ({registry}) => ({
+  registry: registry.payload,
+  loading: registry.loading
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  getRegistry: (packageName, version) => {dispatch(actions.getRegistry(packageName, version))},
+  getRegistryWithPackageName: (packageName) => {dispatch(actions.getRegistryWithPackageName(packageName))}
+});
 
 class Dashboard extends React.Component {
-
+  render() {
+    return (
+      <div className="page dashboard">
+          <Header renderMain={this.renderMain} />
+          {
+            this.props.registry ? <Main /> : undefined
+          }
+          {
+            this.props.loading ? <Loading className={'loading'} /> : undefined
+          }
+      </div>
+    );
+  }
 }
 
-export default () => (
-  <div className="page dashboard">
-    <header className="header">
-      <h3>Dashboard</h3>
-    </header>
-    <form>
-      <div className="form-group">
-        <label htmlFor="srcNpmPackage">Search by npm package</label>
-        <div className="input-group mb-3">
-          <input type="text" className="form-control" placeholder="Enter npm package..." aria-label="Recipient's username"
-                 aria-describedby="button-addon2"/>
-          <div className="input-group-append">
-            <button className="btn btn-outline-secondary" type="button">Search</button>
-          </div>
+class HeaderComponent extends React.Component {
+  state = {
+    packageName: ''
+  };
+  handleInputChange = (event) => {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    this.setState((prevState)=>({
+      ...prevState,
+      [name]: value
+    }));
+  };
+  handleKeyPress = (event) => {
+    if(event.key === 'Enter') {
+      this.props.getRegistryWithPackageName(this.state.packageName);
+      this.setState((prevState)=>({
+        ...prevState,
+        packageName: ''
+      }));
+    }
+  };
+  render() {
+    return (<header className={'header'}>
+      <div className={'container'}>
+        <div className={'left'}>
+          Left content
+        </div>
+        <div className={'center'}>
+          <input name={'packageName'} value={this.state.packageName} onChange={this.handleInputChange} onKeyPress={this.handleKeyPress} type={'text'} placeholder={'Enter npm package...'}/>
+        </div>
+        <div className={'right'}>
+          <ul>
+            <li>
+              User profile
+            </li>
+            <li>
+              <button>Authentication content</button>
+            </li>
+          </ul>
         </div>
       </div>
-    </form>
-    <form>
-      <div className="form-group">
-        <label htmlFor="srcPackageJson">Upload package.json file</label>
-        <input type="file" className="form-control-file" id="srcPackageJson"/>
+    </header>)
+  }
+}
+
+const Header = connect(mapStateToProps, mapDispatchToProps)(HeaderComponent);
+
+class MainComponent extends React.Component {
+  componentDidMount() {
+
+  }
+  render() {
+    return (<main className={'main'}>
+      <div className={'first-row'}>
+        <div className={'left'}>
+          <h3>{this.props.registry.name}</h3>
+        </div>
+        <div className={'right'}>
+          <select>
+            <option value={'choose'}>version</option>
+            {
+              Object.keys(this.props.registry.versions).map((key)=>{
+                return <option key={key} value={`${key}`}>{key}</option>
+              })
+            }
+          </select>
+        </div>
       </div>
-    </form>
-  </div>
-);
+      <div className={'second-row'}>General content boxes</div>
+      <div className={'stats'}>Stats and User interact</div>
+      <div className={'graph'}>Graph shown</div>
+    </main>)
+  }
+}
+
+const Main = connect(mapStateToProps, mapDispatchToProps)(MainComponent);
+
+const Loading = () => (<ReactLoading className={"loading"} type={'spin'} color={'#ff8162'} height={100} width={100}/>);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
