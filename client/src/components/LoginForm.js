@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
 import * as authActions from '../actions/auth.action';
 
 class LoginForm extends React.Component {
@@ -21,7 +22,7 @@ class LoginForm extends React.Component {
     this.props.loginToken({
       email: this.state.email,
       password: this.state.password
-    });
+    }, this.props.history);
   };
   render() {
     return (
@@ -67,8 +68,8 @@ const mapStateToProps = ({auth}) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    loginToken: (payload) => {dispatch(authActions.loginToken(payload))}
+    loginToken: (payload, history) => {dispatch(authActions.loginToken(payload, history))}
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LoginForm));

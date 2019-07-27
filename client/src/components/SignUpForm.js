@@ -24,9 +24,7 @@ class SignUpForm extends React.Component {
       name: this.state.name,
       email: this.state.email,
       password: this.state.password
-    });
-    console.log(this.props.auth);
-    this.props.history.push('/');
+    }, this.props.history);
   };
   render() {
     return (
@@ -64,7 +62,7 @@ const mapStateToProps = ({auth}) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    signUpToken: (payload) => { dispatch(authActions.signUpToken(payload)) }
+    signUpToken: (payload, history) => { dispatch(authActions.signUpToken(payload, history)) }
   }
 };
 

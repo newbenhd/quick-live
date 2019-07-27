@@ -12,7 +12,7 @@ export default (state=initialState, action) => {
     case 'LOADING':
       return {...state, loading: true};
     case 'FAILURE':
-      return {...state, loading: false, error: action.error};
+      return {...state, loading: false, error: action.error, token: ''};
     default:
       return state
   }

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import * as actions from '../actions/user.action';
 
 class Landing extends Component {
   componentDidMount() {
@@ -19,4 +18,4 @@ const mapStateToProps = ({auth}) => {
   return {auth}
 };
 
-export default connect(mapStateToProps, actions)(Landing);
+export default connect(mapStateToProps, null)(Landing);

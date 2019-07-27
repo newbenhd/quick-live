@@ -1,5 +1,9 @@
 import React from "react";
 
+class Dashboard extends React.Component {
+
+}
+
 export default () => (
   <div className="page dashboard">
     <header className="header">
@@ -12,7 +16,7 @@ export default () => (
           <input type="text" className="form-control" placeholder="Enter npm package..." aria-label="Recipient's username"
                  aria-describedby="button-addon2"/>
           <div className="input-group-append">
-            <button className="btn btn-outline-secondary" type="button" >Search</button>
+            <button className="btn btn-outline-secondary" type="button">Search</button>
           </div>
         </div>
       </div>
