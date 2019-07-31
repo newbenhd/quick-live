@@ -2,6 +2,21 @@
   background-color: $tertiary-color-light;
   min-height: 100vh;
   position: relative;
+  .graph {
+    height: auto;
+    circle {
+      fill: $secondary-color-light;
+      stroke: none;
+    }
+    line {
+      stroke: $secondary-color;
+      fill: none;
+      stroke-width: 0.1;
+    }
+    text {
+      font-size: 0.2rem;
+    }
+  }
   .loading {
     position: absolute;
     top: 50%;
