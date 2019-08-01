@@ -1,24 +1,23 @@
 const router = require('express').Router();
 const depn = require('depn');
 
-router.route('/').get((req, res)=>{
+router.route('/').get(async (req, res)=>{
   // for now
-  const packageName = req.query.packageName;
+  const name = req.query.name;
   const version = req.query.version === 'undefined' ? undefined : req.query.version;
-  depn(packageName, version, (err, res2)=>{
-    if(err) {
-      return res.send('error');
-    } else {
-      return res.send(res2.data);
-    }
-  })
+  if(version) {
+    const data = await depn.getRegistry(name, version);
+    return res.send(data);
+  } else {
+    const data = await depn.getRegistryInfo(name);
+    return res.send(data);
+  }
 });
-router.route('/full').get((req, res)=>{
-  const packageName = req.query.packageName;
+router.route('/full').get(async (req, res)=>{
+  const name = req.query.name;
   const version = req.query.version;
-  depn(packageName, version).then(data=>{
-    res.status(200).send(data);
-  }).catch(e=>res.send({error: e}));
+  const data = await depn.getDepn(name, version);
+  res.send(data);
 });
 
 module.exports = router;

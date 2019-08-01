@@ -8,7 +8,7 @@ export default (state = defaultState, action) => {
     case 'SUCCESS_GET':
       return {
         ...state,
-        payload: action.payload,
+        payload: action.data,
         error: null,
         loading: false
       };

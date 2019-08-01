@@ -9,6 +9,17 @@ class Graph extends React.Component {
     type: 'hierarchy',
     data: []
   };
+  getRegularTree = (data = {'name': '1', 'package': {name: 'express', version: '4.16.1'}, 'children': [{"name": "1.1", "children":[{'name': '1.1.1'},{'name': '1.1.2'},{'name': '1.1.3'}]}, {'name': '1.2', children: [{name: '1.2.1'},{name: '1.2.2'}] }]}) => {
+    const dataStructure = d3.hierarchy(data);
+    const treeLayout = d3.tree().size([100, 100]); // width = 100%, height = 100%
+    const information = treeLayout(dataStructure);
+    const circles = d3.select('svg g#circles').selectAll('circle').data(information.descendants());
+    circles.enter().append('circle').attr('cx', d=>(d.y * 0.5)).attr('cy', d=>(d.x * 0.5)).attr("r", 0.5);
+    const connections = d3.select('svg g#lines').selectAll('line').data(information.links());
+    connections.enter().append('line').attr('x1', d=>d.source.y * 0.5).attr('y1', d=>d.source.x * 0.5).attr('x2', d => d.target.y * 0.5).attr('y2', d=>d.target.x * 0.5);
+    const content = d3.select('svg g#info').selectAll('text').data(information.descendants());
+    content.enter().append('text').text(d=>'anonymous').attr('x', d=>(d.y * 0.5) - 5).attr('y', d=>(d.x*0.5) - 2);
+  };
   getFamilyTree = (data = [{},
                            {},
                            {},
@@ -23,16 +34,7 @@ class Graph extends React.Component {
 
   };
   componentDidMount() {
-    const data = {'name': '1', 'package': {name: 'express', version: '4.16.1'}, 'children': [{"name": "1.1", "children":[{'name': '1.1.1'},{'name': '1.1.2'},{'name': '1.1.3'}]}, {'name': '1.2', children: [{name: '1.2.1'},{name: '1.2.2'}] }]};
-    const dataStructure = d3.hierarchy(data);
-    const treeLayout = d3.tree().size([100, 100]); // width = 100%, height = 100%
-    const information = treeLayout(dataStructure);
-    const circles = d3.select('svg g#circles').selectAll('circle').data(information.descendants());
-    circles.enter().append('circle').attr('cx', d=>(d.y * 0.5)).attr('cy', d=>(d.x * 0.5)).attr("r", 0.5);
-    const connections = d3.select('svg g#lines').selectAll('line').data(information.links());
-    connections.enter().append('line').attr('x1', d=>d.source.y * 0.5).attr('y1', d=>d.source.x * 0.5).attr('x2', d => d.target.y * 0.5).attr('y2', d=>d.target.x * 0.5);
-    const content = d3.select('svg g#info').selectAll('text').data(information.descendants());
-    content.enter().append('text').text(d=>'anonymous').attr('x', d=>(d.y * 0.5) - 5).attr('y', d=>(d.x*0.5) - 2);
+    this.getRegularTree();
   }
   render(){
     return (<svg id={'graph'} viewBox={'0 0 100 100'}>
@@ -51,10 +53,8 @@ const mapStateToProps = ({registry}) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getDependency: (packageName) => {dispatch(actions.getDependency(packageName))},
-  getFullDependency: (thisPackage, packageName, version, versions) => {dispatch(actions.getFullDependency(thisPackage,packageName, version, versions))},
-  getRegistry: (packageName, version, versions) => {dispatch(actions.getRegistry(packageName, version, versions))},
-  getRegistryWithPackageName: (packageName) => {dispatch(actions.getRegistryWithPackageName(packageName))}
+  getDependency: (name) => {dispatch(actions.getDependency(name))},
+  getFullDependency: (payload, name, version, versions, parent) => {dispatch(actions.getFullDependency(payload, name, version, versions, parent))}
 });
 
 class Dashboard extends React.Component {
@@ -131,7 +131,7 @@ class MainComponent extends React.Component {
     //   ...prevState,
     //   currentVersion: value
     // }));
-    this.props.getFullDependency(this.props.registry.package, this.props.registry.name, value, this.props.registry.versions);
+    this.props.getFullDependency(this.props.registry.payload, this.props.registry.name, value, this.props.registry.versions, '');
     // this.props.getRegistry(this.props.registry.name, value, this.props.registry.versions);
   };
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -144,7 +144,7 @@ class MainComponent extends React.Component {
           <h3>{this.props.registry.name}</h3>
         </div>
         <div className={'right'}>
-          <select value={this.props.registry.currentVersion} onChange={this.handleSelectChange}>
+          <select value={this.props.registry.version} onChange={this.handleSelectChange}>
             <option value={'choose'}>version</option>
             {
               Object.keys(this.props.registry.versions).map((key)=>{
